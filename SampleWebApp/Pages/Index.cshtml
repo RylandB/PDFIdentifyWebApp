@@ -1,0 +1,39 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<!DOCTYPE html>
+
+<div class="text-center">
+    <form method="post" asp-page-handler="upload" enctype="multipart/form-data">
+        <input name="file" type="file" asp-page-handler="Upload"/>
+        <button type="submit">Upload</button>
+    </form>
+    <p>@Model.Uploaded</p>
+    
+        <div class="result">
+            <img src="@Model.PhotoDataUrl" alt="Unable to open image"/>
+        </div>
+
+    @if (Model.Uploaded)
+    {
+        <form method="post" asp-page-handler="confirm" enctype="multipart/form-data">
+                @Html.DropDownList("ConfirmList",
+                    new SelectList(Model.ColorList), "Select Table")
+                <button type="submit">Confirm</button>
+            </form>
+
+        @*TempData.Keep("Colors");
+        TempData.Keep("JsonDocument");*@
+    };
+
+    @if (Model.OutputDisplay)
+    {
+        <div>
+            <p>@Model.SelectedColor</p>
+            <p>@Model.Output</p>
+            </div>
+    };
+</div>

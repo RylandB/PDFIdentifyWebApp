@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.0</TargetFramework>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+      <PackageReference Include="PDFIdentify" Version="1.0.15-candidate" />
+      <PackageReference Include="System.Drawing.Common" Version="5.0.0-preview.4.20251.6" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\testfiles\example.json" />
+      <_ContentIncludedByDefault Remove="wwwroot\testfiles\test.json" />
+    </ItemGroup>
+
+</Project>
