@@ -33,7 +33,7 @@ namespace SampleWebApp
 
             /*TextractResponse response =
                 JsonConvert.DeserializeObject<TextractResponse>(
-                    File.ReadAllText(@"D:\OCR\PDFIdentify\Python\test.json"));*/
+                    File.ReadAllText(@"D:\OCR\PDFIdentifyC\Python\test.json"));*/
 
 
             List<BoundingBoxIdentifier> bBoxIdens = new List<BoundingBoxIdentifier>();

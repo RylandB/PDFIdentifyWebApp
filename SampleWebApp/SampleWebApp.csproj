@@ -18,7 +18,7 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\RiderProjects\PDFIdentify\PDFIdentify\PDFIdentify.csproj" />
+      <ProjectReference Include="..\..\..\RiderProjects\PDFIdentify\PDFIdentifyC\PDFIdentifyC.csproj" />
     </ItemGroup>
 
 </Project>
