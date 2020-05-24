@@ -6,7 +6,7 @@
 
 
     <ItemGroup>
-      <PackageReference Include="PDFIdentify" Version="1.0.15-candidate" />
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
       <PackageReference Include="System.Drawing.Common" Version="5.0.0-preview.4.20251.6" />
     </ItemGroup>
 
@@ -14,6 +14,11 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\testfiles\example.json" />
       <_ContentIncludedByDefault Remove="wwwroot\testfiles\test.json" />
+    </ItemGroup>
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\RiderProjects\PDFIdentify\PDFIdentify\PDFIdentify.csproj" />
     </ItemGroup>
 
 </Project>

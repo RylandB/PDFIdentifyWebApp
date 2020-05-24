@@ -4,36 +4,42 @@
     ViewData["Title"] = "Home page";
 }
 
-<!DOCTYPE html>
 
+<!DOCTYPE html>
+<script type="text/javascript">
+function f() {
+  
+}
+</script>
 <div class="text-center">
-    <form method="post" asp-page-handler="upload" enctype="multipart/form-data">
+
+    <form method="post" asp-page-handler="Upload" enctype="multipart/form-data">
         <input name="file" type="file" asp-page-handler="Upload"/>
         <button type="submit">Upload</button>
     </form>
-    <p>@Model.Uploaded</p>
-    
-        <div class="result">
-            <img src="@Model.PhotoDataUrl" alt="Unable to open image"/>
-        </div>
 
     @if (Model.Uploaded)
     {
-        <form method="post" asp-page-handler="confirm" enctype="multipart/form-data">
-                @Html.DropDownList("ConfirmList",
-                    new SelectList(Model.ColorList), "Select Table")
-                <button type="submit">Confirm</button>
-            </form>
+        <p>Select the color that corresponds with the table containing your asset holdings data</p>
+        <form method="post" asp-page-handler="Confirm" enctype="multipart/form-data">
+            @Html.DropDownList("ConfirmList",
+                new SelectList(Model.ColorList), "Select Table")
+            <button type="submit">Confirm</button>
+        </form>
 
-        @*TempData.Keep("Colors");
-        TempData.Keep("JsonDocument");*@
-    };
+        <div class="result">
+            <img src="@Model.PhotoDataUrl" alt="Unable to open image"/>
+        </div>
+    }
 
     @if (Model.OutputDisplay)
     {
+        <br/>
         <div>
-            <p>@Model.SelectedColor</p>
+            <p>Table Color: @Model.SelectedColor</p>
+            <p>Selected Textract ID: @Model.BlockId</p>
+            <p>All Assets</p>
             <p>@Model.Output</p>
-            </div>
-    };
+        </div>
+    }
 </div>

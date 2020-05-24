@@ -1,9 +1,11 @@
 ﻿﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+ using System.Drawing.Imaging;
  using System.IO;
+ using Amazon;
  using Microsoft.AspNetCore.Http;
- using Newtonsoft.Json;
+ using PDFIdentify;
  using PDFIdentify.DataStructure;
 using PDFIdentify.DataStructure.ResponseObjects;
 
@@ -11,12 +13,12 @@ namespace SampleWebApp
 {
     public static class IndexOperations
     {
-        public static VisualData OnPostActions(IFormFile imageFile)
+        public static VisualData UploadActions(IFormFile imageFile)
         {
             //Create Image from File
             Image image = CreateImage(imageFile);
             
-            /*
+            
             //Upload DataStream to S3
             using (MemoryStream memoryStream = new MemoryStream())
             {
@@ -27,11 +29,11 @@ namespace SampleWebApp
             //Run Textract Operations
             //Preserve tables bounding boxes & response.blocks
             TextractResponse response = Analyze.AnalyzeFile("112233.png", "https://localhost:5003").Result;
-            */
+            
 
-            TextractResponse response =
+            /*TextractResponse response =
                 JsonConvert.DeserializeObject<TextractResponse>(
-                    File.ReadAllText(@"D:\OCR\PDFIdentify\Python\test.json"));
+                    File.ReadAllText(@"D:\OCR\PDFIdentify\Python\test.json"));*/
 
 
             List<BoundingBoxIdentifier> bBoxIdens = new List<BoundingBoxIdentifier>();
@@ -45,7 +47,7 @@ namespace SampleWebApp
             //Draw on Image
             var visualData = new VisualData
             {
-                Colors = drawBBOnImage(image, bBoxIdens), DataUrl = GetImageDataUrl(image), TextractResponse = response
+                Colors = DrawBbOnImage(image, bBoxIdens), DataUrl = GetImageDataUrl(image), TextractResponse = response
             };
 
             //Return Image DataURL & Options for Dropdown Menu
@@ -102,7 +104,7 @@ namespace SampleWebApp
             return new BoundingBoxIdentifier(left, top, width, height, label, id);
         }
 
-        private static Dictionary<string, string> drawBBOnImage(Image image, IEnumerable<BoundingBoxIdentifier> bBoxIdens)
+        private static Dictionary<string, string> DrawBbOnImage(Image image, IEnumerable<BoundingBoxIdentifier> bBoxIdens)
         {
             List<Color> colors = new List<Color>()
             {
@@ -141,6 +143,60 @@ namespace SampleWebApp
             
             return usedColors;
         }
+
+        public static List<AssetData> RetrieveAssetData(string blockId, List<Block> blocks)
+        {
+            //Create a new TableToolbox with the blocks returned by AWS Textract
+            TableToolbox tableToolbox = new TableToolbox(blocks);
+            //Filter the Toolbox to only remember the blocks that are descendants of the Table
+            tableToolbox.FilterToChildren(blockId);
+            //Build the lookup dictionary for the relevant blocks
+            tableToolbox.BuildBlockLookup();
+            //Build an [x,y] 2-Dimensional array of the Table's Cells
+            tableToolbox.ConstructTable(blockId);
+
+            
+
+            return FindAssetsInTable(tableToolbox);
+            
+        }
+
+        private static List<AssetData> FindAssetsInTable(TableToolbox tableToolbox)
+        {
+            //Navigate the cells of the table to find column indexes for the information that must be located by matching a header string
+            int[] assetIndex = tableToolbox.FindIndex(new List<string>() {"asset", "holding", "assets", "holdings"});
+            int[] quantityIndex = tableToolbox.FindIndex(new List<string>(){"quantity", "amount", "#", "quan"});
+            
+            //If there is not an index for assets (assetColumnIndex has -1 as x coordinate), return empty list;
+            if (assetIndex[0] == -1) {return new List<AssetData>();}
+            
+            //Else, iterate through each row in the table and add assets to the list
+            List<AssetData> assets = new List<AssetData>();
+            for (int row = 0; row < tableToolbox.Table.GetLength(1); row++)
+            {
+                //Evaluate if the row contains a valid asset
+                try
+                {
+                    //Get all text from the cell at index (x,y) in the assumed quantity column
+                    string quantityString = tableToolbox.GetAllTextFromCell(quantityIndex[0], row);
+                    //Strip quantityString's decimal place (Round down)
+                    quantityString = quantityString.Substring(0, quantityString.IndexOf('.'));
+                    //Attempt to convert the string to an int
+                    var quantity = int.Parse(quantityString);
+                    
+                    assets.Add(new AssetData(
+                        tableToolbox.GetAllTextFromCell(assetIndex[0], row),
+                        quantity));
+
+                }
+                catch
+                {
+                    // ignored exceptions, catch will assume failures to execute above code as indication of a non-valid asset
+                }
+            }
+
+            return assets;
+        }
     }
 
     public class VisualData
@@ -150,5 +206,17 @@ namespace SampleWebApp
         public Dictionary<string, string> Colors { get; set; }
         
         public TextractResponse TextractResponse { get; set; }
+    }
+
+    public class AssetData
+    {
+        public string Name;
+        public int Quantity;
+
+        public AssetData(string name, int quantity)
+        {
+            Name = name;
+            Quantity = quantity;
+        }
     }
 }
