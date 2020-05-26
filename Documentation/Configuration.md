@@ -18,6 +18,8 @@ This guide will assume that the host machine is a Windows PC running both the we
 * Use CMD to run TextractMiddleman.py, change the port parameter in line 81 to the desired port number
   * The sample WebApp uses port 5003 to communicate with the middleman server
   
+![](images/documentationImage2.PNG)
+  
 # WebApp Setup
 
 The source code of the PDFIdentify library is available in this repository. It is also available as a nuget package that can be installed to a local directory.
