@@ -12,7 +12,7 @@ This guide will assume that the host machine is a Windows PC running both the we
 * Ensure that you have an installation of Python 2.7 or newer from [Python.org](https://www.python.org/)
 * If you named the bucket something other than "pdfidentify":
   * Change the string "pdfidentify" in line 19 of Python/TextractMiddleman.py to be the name of your bucket
-![](Documentation/Images/documentationImage1.PNG)
+* ![](images/documentationImage1.PNG)
 * If you want to run the middleman service on a port other than 5003, change the 
 * Use CMD to run TextractMiddleman.py, change the port parameter in line 81 to the desired port number
   * The sample WebApp uses port 5003 to communicate with the middleman server
