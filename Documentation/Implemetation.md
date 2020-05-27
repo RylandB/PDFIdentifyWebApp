@@ -134,3 +134,4 @@ int columnIndex - column number or x-coordinate of the CELL (Left column is 0)
 int rowIndex - row number or y-coordinate of the CELL (Top row is 0)
 
 ### Return Data
+string cellText - string containing all of the text from the specified cell
