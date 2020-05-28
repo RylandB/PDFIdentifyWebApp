@@ -152,7 +152,7 @@ namespace PDFIdentify
             string cellText = "";
             
             //If cell has no children, it has no text so return empty string
-            if (cell.Relationships is null) { return cellText; }
+            if (cell.Relationships is null) {  return cellText; }
 
             //Each relationship corresponds with a list of IDs of that type (i.e. {"CHILD":["id1", "id2", "id3"...]}
             foreach (var relationship in cell.Relationships)
